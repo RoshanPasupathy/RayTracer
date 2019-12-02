@@ -19,17 +19,22 @@ class Hittable {
 public:
 	virtual bool hit(const Ray& r, float t_min, float t_max, HitInfo& hitInfo) const = 0;
 	virtual ~Hittable() = 0;
-	virtual int drawBoundingBox(Rasterizer &rt, int level) const;
+	virtual void drawBoundingBox(Rasterizer &rt, int depth, int max_depth) const;
+	virtual int getTreeNodeHeight() const;
 
 	AABB aabb;
 };
 
 Hittable::~Hittable() {}
 
-int Hittable::drawBoundingBox(Rasterizer &rt,  int level) const
+void Hittable::drawBoundingBox(Rasterizer &rt,  int depth, int max_depth) const
 {
-	rt.RasterizeBox(aabb, &getColor(1,1));
-	return level + 1;
+	rt.RasterizeBox(aabb, &getColor(depth,max_depth));
+}
+
+int Hittable::getTreeNodeHeight() const
+{
+	return 0; // height is 0 for primitives
 }
 
 bool hitList(Hittable ** shapes, int numShapes, const Ray& r, float tMin, float tMax, HitInfo& hitInfo) {

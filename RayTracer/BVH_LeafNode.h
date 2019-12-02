@@ -29,7 +29,8 @@ public:
 	}
 
 	virtual bool hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const;
-	virtual int drawBoundingBox(Rasterizer &rt, int level) const;
+	virtual void drawBoundingBox(Rasterizer &rt, int depth, int max_depth) const;
+	virtual int getTreeNodeHeight() const;
 };
 
 bool BVH_leafnode::hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const
@@ -50,21 +51,29 @@ bool BVH_leafnode::hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo)
 	return hit;
 }
 
-int BVH_leafnode::drawBoundingBox(Rasterizer &rt, int level) const
+void BVH_leafnode::drawBoundingBox(Rasterizer &rt, int depth, int max_depth) const
+{
+	for (int i = 0; i < numPrimitives; i++)
+	{
+		primitiveList[i]->drawBoundingBox(rt, depth + 1, max_depth);
+	}
+
+	// get my colour
+	rt.RasterizeBox(aabb, &getColor(depth, max_depth));
+}
+
+int BVH_leafnode::getTreeNodeHeight() const
 {
 	int max_depth = 0;
 	int depth;
 	for (int i = 0; i < numPrimitives; i++)
 	{
-		if ((depth = primitiveList[i]->drawBoundingBox(rt, level + 1)) > max_depth)
+		if ((depth = primitiveList[i]->getTreeNodeHeight()) > max_depth)
 		{
 			max_depth = depth;
 		}
 	}
-
-	// get my colour
-	rt.RasterizeBox(aabb, &getColor(level, max_depth));
-	return max_depth;
+	return max_depth + 1;
 }
 
 #endif

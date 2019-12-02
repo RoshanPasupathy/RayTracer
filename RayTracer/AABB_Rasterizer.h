@@ -370,7 +370,7 @@ const int numColours = sizeof(colorRange) / sizeof(Vector3);
 // need better colour function
 Vector3 getColor(int i, int max_val)
 {
-	float float_index = 1 - ((float)i / (float)max_val);
+	float float_index = ((float)i / (float)max_val);
 	float_index *= (numColours - 1);
 	int ind = (int)float_index;
 	float f = float_index - (float)ind;

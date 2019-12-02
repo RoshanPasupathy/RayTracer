@@ -510,7 +510,8 @@ int main(int argc, char *argv[]) {
 	{
 		std::cout << "------------------------------------------------------\n";
 		std::cout << "\nDrawing bounding boxes... \n";
-		int max_depth = bvh_root->drawBoundingBox(rt, 0);
+		int max_depth = bvh_root->getTreeNodeHeight();
+		bvh_root->drawBoundingBox(rt, 0, max_depth);
 		stbi_write_png("output_box.png", WIDTH, HEIGHT, 3, pixelBuffer, 3 * WIDTH);
 		std::cout << "Done.	Max Tree depth: " << max_depth << std::endl;
 	}
